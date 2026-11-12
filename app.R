@@ -31,7 +31,8 @@ if (usar_mirai() && !paralelo_activo()) {
 
 ui <- page_navbar(
   id = "nav",
-  title = tags$span(style = "font-weight:600;", "Microsimulación del subsidio eléctrico · Guatemala"),
+  title = tags$span(style = "font-weight:600;", "SIMFI - GT"),
+  window_title = "SIMFI - GT",
   theme = bs_theme(version = 5, bootswatch = "zephyr", primary = "#005A9C", "navbar-bg" = "#0d2137"),
   fillable = FALSE,
   header = if (MODO == "servidor") tags$head(tags$script(src = "autosave.js")),

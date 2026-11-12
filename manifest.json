@@ -3601,7 +3601,7 @@
       "checksum": "9d61fe943acc1034e10d18ea9447d402"
     },
     "app.R": {
-      "checksum": "bace8d86118a3c8aa88132221b92ffcb"
+      "checksum": "4e4e247f97a3e614b76dc5b22cbd2dd8"
     },
     "data/base_scenario.rds": {
       "checksum": "55195d60444f5c5897b257a2d37ff8e8"
@@ -3685,7 +3685,7 @@
       "checksum": "5b9380efe0f845a3387296ef9fa161d8"
     },
     "R/paralelo.R": {
-      "checksum": "b4ca4dccb3db2e3fa2e4727d8942e18e"
+      "checksum": "9f4d0c35f254560cc8085ce196f64322"
     },
     "R/pipeline_map.R": {
       "checksum": "f2f5825b7441d20c52808b3a459b7987"

@@ -39,5 +39,6 @@ source("data-raw/escribir_manifest.R")   # necesita rsconnect
   el navegador de cada persona. Se puede forzar el modo con la variable de entorno `GTSIMFI_MODO`
   (`local` o `servidor`).
 - Los escenarios corren en paralelo con `mirai` en modo servidor. `GTSIMFI_DAEMONS` fija los
-  daemons por proceso (por defecto 2; cada uno ocupa ~0.7 GB tras una corrida) y
+  daemons por proceso (por defecto 1; cada uno ocupa ~0.7 GB tras una corrida; subirlo solo si el servidor tiene
+  más de un CPU) y
   `GTSIMFI_MIRAI` = `0` apaga el paralelo (`1` lo fuerza, por ejemplo para probar localmente).

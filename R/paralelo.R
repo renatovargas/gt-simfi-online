@@ -17,11 +17,13 @@ usar_mirai <- function() {
   quiere && requireNamespace("mirai", quietly = TRUE) && requireNamespace("promises", quietly = TRUE)
 }
 
-#' Número de daemons por proceso de la app (`GTSIMFI_DAEMONS`, por defecto 2).
+#' Número de daemons por proceso de la app (`GTSIMFI_DAEMONS`, por defecto 1:
+#' en Connect Cloud gratuito hay 1 CPU y 4 GB, así que más daemons no aceleran y
+#' gastan memoria; con 1 la interfaz igual no se bloquea mientras se simula).
 #' En Connect cada proceso levanta los suyos: memoria ~ procesos x (1 + daemons).
 n_daemons <- function() {
-  n <- suppressWarnings(as.integer(Sys.getenv("GTSIMFI_DAEMONS", "2")))
-  if (is.na(n) || n < 1L) 2L else n
+  n <- suppressWarnings(as.integer(Sys.getenv("GTSIMFI_DAEMONS", "1")))
+  if (is.na(n) || n < 1L) 1L else n
 }
 
 #' Levanta los daemons y carga en cada uno el código del motor y sus paquetes.
