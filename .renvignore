@@ -1,0 +1,3 @@
+# Para el detector de dependencias de rsconnect::writeManifest() (data-raw/escribir_manifest.R).
+# El script 05 (reportes) no lo ejecuta la app y es el único que usa sf y ragg.
+/reference/scripts_R/05_GTM26SUB_Reportes.R

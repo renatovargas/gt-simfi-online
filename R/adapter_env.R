@@ -1,9 +1,11 @@
 # Entorno hijo con las globales que esperan los scripts de referencia.
 # Nunca se lee ni escribe en .GlobalEnv ni se usa setwd().
 
-#' Adjunta los paquetes del Master (mismo orden, mismo enmascaramiento).
+#' Adjunta los paquetes del Master (mismo orden, mismo enmascaramiento). Los de
+#' REF_PAQUETES_OPCIONALES se omiten si no están instalados.
 adjuntar_paquetes_ref <- function(paquetes = REF_PAQUETES) {
   for (p in paquetes) {
+    if (p %in% REF_PAQUETES_OPCIONALES && !requireNamespace(p, quietly = TRUE)) next
     suppressPackageStartupMessages(library(p, character.only = TRUE, quietly = TRUE))
   }
   invisible(paquetes)

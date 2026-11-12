@@ -105,8 +105,8 @@ tests/       pruebas de paridad + tests/fixtures/ (copias de 01_datos/r_mod)
 
 Este repo no tiene sitio Quarto. La app se despliega en Posit Connect desde GitHub (*git-backed*), a partir de `manifest.json`:
 
-- `manifest.json` se genera con `rsconnect::writeManifest()` (ver `README.md`) y se versiona. Regenerarlo cada vez que cambien los paquetes o los archivos de la app.
-- Los paquetes del motor se adjuntan con `library(p, character.only = TRUE)`, que el detector de dependencias no ve; por eso se declaran explícitamente en `R/dependencias.R` (nunca se carga).
+- `manifest.json` se genera con `data-raw/escribir_manifest.R` (`rsconnect::writeManifest()` con la lista de archivos de la app) y se versiona. Regenerarlo cada vez que cambien los paquetes o los archivos de la app. `.renvignore` excluye de la detección el script `05` (no se ejecuta; es el único que usa `sf`).
+- Los paquetes del motor se adjuntan con `library(p, character.only = TRUE)`, que el detector de dependencias no ve; por eso se declaran explícitamente en `R/dependencias.R` (nunca se carga). `sf` y `ragg` están en `REF_PAQUETES_OPCIONALES` (`R/adapter_names.R`): `02`-`04` no los usan (paridad idéntica sin ellos) y se adjuntan solo si están instalados.
 - Interruptor de modo en `R/config.R` (`modo_app()`): `"local"` en el equipo de cada persona y `"servidor"` en Connect. Así no se bifurca el código.
 - En modo servidor el autosave va al navegador de cada persona (`localStorage`, clave `gtsimfi_autosave`); el servidor no lo guarda hasta recibir lo que había en el navegador, para no pisarlo. La carpeta de la app es compartida y se borra en cada redespliegue.
 - Configuración en Connect: una conexión por proceso, para que una persona no bloquee a otra.

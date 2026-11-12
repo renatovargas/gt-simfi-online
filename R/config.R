@@ -34,7 +34,8 @@ PAQUETES_APP <- c("shiny", "bslib", "DT", "plotly", "htmltools", "jsonlite", "rl
 
 #' Paquetes necesarios (app y motor) que no están instalados en este equipo.
 paquetes_faltantes <- function() {
-  todos <- setdiff(unique(c(PAQUETES_APP, if (exists("REF_PAQUETES")) REF_PAQUETES)), "testthat")
+  todos <- setdiff(unique(c(PAQUETES_APP, if (exists("REF_PAQUETES")) REF_PAQUETES)),
+                   c("testthat", if (exists("REF_PAQUETES_OPCIONALES")) REF_PAQUETES_OPCIONALES))
   todos[!vapply(todos, requireNamespace, logical(1), quietly = TRUE)]
 }
 

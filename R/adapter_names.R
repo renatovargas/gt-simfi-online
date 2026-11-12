@@ -8,6 +8,11 @@ REF_PAQUETES <- c(
   "scales", "collapse", "rlang", "ragg", "sf", "haven"
 )
 
+# Paquetes del Master que 02-04 no usan (verificado: la paridad con los fixtures es
+# idéntica sin adjuntarlos). Se adjuntan solo si están instalados, en el mismo orden,
+# para que el servidor no necesite `sf` (GDAL, GEOS y PROJ).
+REF_PAQUETES_OPCIONALES <- c("ragg", "sf")
+
 # Scripts de referencia (carpeta reference/scripts_R/).
 REF_SCRIPTS <- c(
   funciones     = "x_GTM26SUB_funciones.R",
