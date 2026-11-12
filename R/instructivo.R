@@ -85,10 +85,6 @@ instructivo_ui <- function() {
         tags$li("Una tarifa objetivo de 0 no es lo mismo que vacía: da al tramo el aporte social máximo."),
         tags$li("Los montos se expresan en quetzales de 2023, con la población de la ENCOVI 2023."))
     ),
-    p(class = "small mt-3",
-      "Instructivo completo, instalación y descarga: ",
-      tags$a(href = "https://renatovargas.github.io/gt-simfi/instructivo.html", target = "_blank",
-             rel = "noopener", "renatovargas.github.io/gt-simfi")),
     div(class = "d-flex justify-content-end pt-3 mt-2 border-top",
         actionButton("comenzar", HTML("Comenzar: 1 · Esquemas tarifarios →"), class = "btn-primary"))
   )

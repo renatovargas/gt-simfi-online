@@ -27,7 +27,7 @@ ruta_app <- function(...) {
 }
 
 # Paquetes de la app (los del motor del colega están en REF_PAQUETES, adapter_names.R).
-# El sitio (index.qmd) documenta esta lista; no se instalan en tiempo de ejecución.
+# README.md documenta esta lista; no se instalan en tiempo de ejecución.
 PAQUETES_APP <- c("shiny", "bslib", "DT", "plotly", "htmltools", "jsonlite", "rlang",
                   "readxl", "openxlsx", "janitor", "testthat")
 # Solo para construir datos (data-raw/): sf, dplyr.

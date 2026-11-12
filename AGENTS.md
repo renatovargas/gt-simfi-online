@@ -1,6 +1,6 @@
 # AGENTS.md — App Shiny de impacto fiscal: subsidio eléctrico en Guatemala
 
-Copiar este archivo como `AGENTS.md` en la raíz del repo nuevo y ajustar el nombre del repo y las rutas si cambian.
+Versión para **Posit Connect** (`gt-simfi-online`). Parte de `../gt-simfi` (la versión local, que no se modifica desde aquí; se puede traer del remoto `local`). Ver también `HANDOVER_ONLINE.md`.
 
 ## Qué es este proyecto
 
@@ -90,8 +90,9 @@ Estructura objetivo del repo (detalle en `handover.md` sección 5.4):
 
 ```
 app.R        punto de entrada de la app Shiny
-index.qmd    página principal del sitio Quarto (guía de descarga y manual de usuario); _quarto.yml en la raíz
-handover.md  diseño de la app (no se renderiza; ver sección "Sitio Quarto")
+README.md    descripción corta, paquetes y despliegue
+manifest.json  manifiesto de Connect (rsconnect::writeManifest())
+handover.md  diseño de la app
 reference/   copia verbatim del pipeline del colega (zona de entrega, inmutable)
 R/           config.R, adapter_*.R, base_scenario.R, results_views.R, map_views.R, data_load.R, sync_reference.R, pipeline_map.R
 mod_*.R      módulos Shiny
@@ -100,22 +101,16 @@ data/        RDS (capas A/B, incluido base_scenario.rds) + MANIFEST + gis/ (geoj
 tests/       pruebas de paridad + tests/fixtures/ (copias de 01_datos/r_mod)
 ```
 
-## Sitio Quarto (GitHub Pages) en el mismo repo
+## Despliegue en Posit Connect
 
-El repo contiene la app (`app.R`) y un sitio Quarto con la guía de descarga y el manual de usuario. Conviven sin problema, con estas reglas:
+Este repo no tiene sitio Quarto. La app se despliega en Posit Connect desde GitHub (*git-backed*), a partir de `manifest.json`:
 
-- `_quarto.yml` debe limitar lo que se renderiza: `project: render: ["*.qmd"]` (o una lista explícita). Así `handover.md`, `AGENTS.md`, `README.md`, `reference/`, `tests/` y `data-raw/` nunca se convierten en páginas del sitio.
-- Definir `output-dir: docs` (o publicar con `quarto publish gh-pages`). Los RDS de `data/` no son recursos del sitio y no deben listarse en `resources:`.
-- Las páginas del sitio no deben ejecutar la app ni leer `data/`. Si necesitan código R, usar `freeze: auto` para que el render no dependa de datos que quizá no estén en el entorno de CI.
-- GitHub Pages es estático: no ejecuta Shiny. La app se despliega aparte (Posit Connect, shinyapps.io o un servidor propio) y el sitio solo enlaza a ella o explica cómo descargarla y correrla localmente.
-- Todo texto del sitio en español, mismo criterio de UI que la app.
-
-## Despliegue: local primero, servidor como opción futura
-
-La forma principal de uso es **correr la app localmente** (por el costo de los cálculos); el sitio explica la descarga y la instalación de los paquetes (sin `renv`). Hospedarla en un servidor con `mirai` se considera una opción a explorar más adelante. No implementarla sin que se pida, pero diseñar para no cerrar esa puerta:
-
-- Un único punto de entrada al motor (por ejemplo `run_scenario(tablas, session_dir)`) que no use `.GlobalEnv`, `setwd` ni rutas fijas y que escriba solo en un directorio temporal propio. La app solo llama a esa función.
-- Si se pasa a servidor: `shiny::ExtendedTask` + `mirai`, con los datos de `data/` cargados una vez por daemon (`mirai::everywhere()`), un directorio temporal por corrida y límite de memoria y de daemons acorde al servidor. Verificar con la prueba de aislamiento entre sesiones.
+- `manifest.json` se genera con `rsconnect::writeManifest()` (ver `README.md`) y se versiona. Regenerarlo cada vez que cambien los paquetes o los archivos de la app.
+- Los paquetes del motor se adjuntan con `library(p, character.only = TRUE)`, que el detector de dependencias no ve; por eso se declaran explícitamente en `R/dependencias.R` (nunca se carga).
+- Interruptor de modo en `R/config.R` (`modo_app()`): `"local"` en el equipo de cada persona y `"servidor"` en Connect. Así no se bifurca el código.
+- En modo servidor el autosave va al navegador de cada persona (`localStorage`); la carpeta de la app es compartida y se borra en cada redespliegue.
+- Configuración en Connect: una conexión por proceso, para que una persona no bloquee a otra.
+- Un único punto de entrada al motor, `run_scenario(tablas, session_dir)`, que no usa `.GlobalEnv`, `setwd` ni rutas fijas y escribe solo en un directorio temporal propio. En modo servidor los escenarios corren en paralelo con `shiny::ExtendedTask` + `mirai` (paquetes y código cargados una vez por daemon con `mirai::everywhere()`); se conserva un modo síncrono de respaldo. Verificar con la prueba de aislamiento entre sesiones.
 
 ## Patrones reutilizables de `simfi-rd` (adaptar, no copiar)
 
@@ -156,7 +151,6 @@ La forma principal de uso es **correr la app localmente** (por el costo de los c
 ## Rutas y directorio de trabajo
 
 - El proyecto se usa con **Positron > Open Folder** sobre la raíz del repo. Todas las rutas son **relativas a la raíz** (`data/...`, `R/...`, `reference/...`). No usar `setwd()`, `here::here()` ni rutas absolutas ni nada que dependa de la máquina.
-- `_quarto.yml` fija `execute-dir: project` para que los cálculos de los `.qmd` también corran desde la raíz.
 - La app se lanza desde la raíz (`shiny::runApp()`), así que `app.R` y los módulos usan las mismas rutas relativas.
 - Excepciones a tener presentes: `testthat` corre con el directorio de trabajo en `tests/testthat/`, así que en las pruebas armar las rutas con `testthat::test_path()` o con un helper que suba a la raíz; y los scripts de `reference/` no se ejecutan con sus rutas originales, sino a través del adaptador (entorno con carpetas simuladas).
 - Los scripts de `data-raw/` también se corren desde la raíz con rutas relativas.
@@ -167,7 +161,7 @@ La forma principal de uso es **correr la app localmente** (por el costo de los c
 - Usar `bslib` para la interfaz y el tema.
 - Escribir las letras acentuadas y la puntuación española (á, é, í, ó, ú, ñ, ü, ¿, ¡) como caracteres UTF-8 literales en el código. Para símbolos que no son letras (flechas, punto medio, raya, comillas angulares, puntos suspensivos, delta) se aceptan escapes `\uXXXX` en cadenas de R.
 - Codificación: todos los archivos en UTF-8. Al editar, verificar que no se corrompan los caracteres multibyte (`file -I`, o releer el archivo tras escribir). Con las herramientas actuales de edición de Positron esto no suele ser un problema, pero es un riesgo conocido de este proyecto.
-- Pipe nativo `|>`. Sin `install.packages()` en tiempo de ejecución; no se usa `renv`: los paquetes son estándar y estables; la lista de paquetes de la app es `PAQUETES_APP` en `R/config.R` (los del motor, `REF_PAQUETES`) y el sitio (`index.qmd`) la documenta; `plotly` es necesario.
+- Pipe nativo `|>`. Sin `install.packages()` en tiempo de ejecución; no se usa `renv`: los paquetes son estándar y estables; la lista de paquetes de la app es `PAQUETES_APP` en `R/config.R` (los del motor, `REF_PAQUETES`) y `README.md` la documenta; `plotly` es necesario.
 - Insignia de estado de componentes: "sin guardar" / "guardado" / "cambios sin guardar".
 
 ## Trampas conocidas del pipeline de referencia
@@ -186,7 +180,7 @@ GitHub avisa a partir de 50 MiB por archivo y rechaza el push a partir de 100 Mi
 
 - Ningún archivo versionado del repo debe superar **25 MB** (margen de seguridad). Hoy el más grande es `data/dispincome_raw.rds` (~11 MB) y todo `data/` suma ~15 MB (y el repo completo con fixtures y scripts, ~19 MB).
 - Antes de agregar cualquier dato o resultado nuevo, revisar su tamaño. Si un archivo se acerca al límite, reducirlo (solo las columnas que usa el motor, `compress = "xz"` en `saveRDS`) o dejarlo fuera del repo (`.gitignore`) y regenerarlo con `data-raw/`.
-- Nunca commitear insumos crudos grandes (`.dta`, ENCOVI sin procesar, `kwh_*.xlsx`) ni salidas generadas (`docs/` con el sitio renderizado puede crecer; revisarlo).
+- Nunca commitear insumos crudos grandes (`.dta`, ENCOVI sin procesar, `kwh_*.xlsx`) ni salidas generadas.
 - Existe una prueba (`tests/testthat/test-tamano-archivos.R`) que falla si algún archivo rastreado por git pasa de 25 MB. Mantenerla y correrla antes de cada commit con datos nuevos.
 
 ## Pruebas y verificación
