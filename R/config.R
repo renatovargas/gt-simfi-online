@@ -37,3 +37,13 @@ paquetes_faltantes <- function() {
   todos <- setdiff(unique(c(PAQUETES_APP, if (exists("REF_PAQUETES")) REF_PAQUETES)), "testthat")
   todos[!vapply(todos, requireNamespace, logical(1), quietly = TRUE)]
 }
+
+#' Modo de la app: "local" (equipo de cada persona) o "servidor" (Posit Connect).
+#'
+#' Se fija con la variable de entorno `GTSIMFI_MODO`; si no está, se usa "servidor"
+#' cuando corre en Connect (que fija `R_CONFIG_ACTIVE = "rsconnect"`) y "local" si no.
+modo_app <- function() {
+  m <- tolower(Sys.getenv("GTSIMFI_MODO"))
+  if (m %in% c("local", "servidor")) return(m)
+  if (identical(Sys.getenv("R_CONFIG_ACTIVE"), "rsconnect")) "servidor" else "local"
+}

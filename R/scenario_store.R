@@ -7,8 +7,11 @@
 # Un escenario compone un componente de cada tipo por nombre ("" / "__ref__" =
 # situación actual o sin compensación): list(name, sub, comp, comparar).
 #
-# Persistencia: autosave local (RDS en app_state/) y Excel para compartir
-# (hojas `esquemas`, `compensaciones` y `escenarios`, formato ancho).
+# Persistencia: autosave y Excel para compartir (hojas `esquemas`,
+# `compensaciones` y `escenarios`, formato ancho). El autosave depende de
+# modo_app(): en modo local, RDS en app_state/; en modo servidor, en el
+# navegador de cada persona (localStorage, ver www/autosave.js), porque en el
+# servidor la carpeta de la app es compartida y se borra en cada redespliegue.
 
 # --- Excel ----------------------------------------------------------------------
 
@@ -106,4 +109,63 @@ autosave_borrar <- function(raiz = ".") {
   ruta <- file.path(raiz, "app_state", "autosave.rds")
   if (file.exists(ruta)) unlink(ruta)
   invisible(TRUE)
+}
+
+# --- Autosave en el navegador (modo servidor) ---------------------------------------
+
+AUTOSAVE_VERSION <- 1L
+
+#' Estado de la sesión -> texto para guardar en el navegador.
+#' Devuelve texto plano: con la clase "json", Shiny lo enviaría como objeto JSON y
+#' el navegador guardaría "[object Object]".
+estado_a_texto <- function(libs, escenarios) {
+  as.character(jsonlite::serializeJSON(list(version = AUTOSAVE_VERSION, libs = libs, escenarios = escenarios,
+                               ts = format(Sys.time(), "%Y-%m-%d %H:%M:%S")), digits = I(17)))
+}
+
+#' Texto guardado en el navegador -> `list(libs, escenarios)`, o NULL si está
+#' vacío, es inválido o de otra versión. El texto viene del navegador: solo se
+#' conservan los campos esperados, con su tipo (numéricos en los componentes;
+#' texto y lógico en los escenarios).
+texto_a_estado <- function(txt) {
+  if (!is.character(txt) || length(txt) != 1L || is.na(txt) || !nzchar(txt)) return(NULL)
+  tryCatch({
+    x <- jsonlite::unserializeJSON(txt)
+    if (!is.list(x) || !identical(x$version, AUTOSAVE_VERSION) ||
+        !is.list(x$libs) || !is.list(x$escenarios)) return(NULL)
+    num <- \(v) { v <- suppressWarnings(as.numeric(v)); if (length(v) == 1L) v else NA_real_ }
+    chr <- \(v) if (is.character(v) && length(v) == 1L && !is.na(v)) v else ""
+    comp <- \(lista, campos) {
+      lista <- as.list(lista)
+      if (!length(lista)) return(list())
+      stopifnot(!is.null(names(lista)), all(nzchar(names(lista))))
+      lapply(lista, \(p) setNames(lapply(campos, \(c) num(p[[c]])), campos))
+    }
+    libs <- list(sub = comp(x$libs$sub, SUB_CAMPOS), comp = comp(x$libs$comp, COMP_CAMPOS))
+    escenarios <- lapply(x$escenarios, \(e) list(name = chr(e$name), sub = chr(e$sub),
+                                                 comp = chr(e$comp), comparar = isTRUE(e$comparar)))
+    list(libs = libs, escenarios = escenarios)
+  }, error = \(e) NULL)
+}
+
+# --- Autosave según el modo -----------------------------------------------------------
+
+#' Guarda el estado de la sesión (RDS local o navegador, según modo_app()).
+autosave_guardar_sesion <- function(session, raiz, libs, escenarios, modo = modo_app()) {
+  if (modo == "servidor") {
+    session$sendCustomMessage("gtsimfi_guardar", estado_a_texto(libs, escenarios))
+    invisible(TRUE)
+  } else {
+    autosave_escribir(raiz, libs, escenarios)
+  }
+}
+
+#' Borra el estado guardado de la sesión (RDS local o navegador, según modo_app()).
+autosave_borrar_sesion <- function(session, raiz, modo = modo_app()) {
+  if (modo == "servidor") {
+    session$sendCustomMessage("gtsimfi_borrar", TRUE)
+    invisible(TRUE)
+  } else {
+    autosave_borrar(raiz)
+  }
 }

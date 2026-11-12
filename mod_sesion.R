@@ -6,7 +6,8 @@ mod_sesion_ui <- function(id) {
     card_header("Guardar y compartir"),
     p(class = "text-muted small mb-2",
       "El archivo Excel contiene una hoja con los esquemas, otra con las compensaciones y otra con los ",
-      "escenarios; puede editarlo y volver a cargarlo. El trabajo también se guarda automáticamente en este equipo."),
+      "escenarios; puede editarlo y volver a cargarlo. El trabajo también se guarda automáticamente en este ",
+      if (modo_app() == "servidor") "navegador." else "equipo."),
     layout_columns(
       col_widths = c(6, 6),
       downloadButton(ns("exportar"), "Exportar biblioteca y escenarios (Excel)", class = "w-100 btn-outline-secondary"),
@@ -61,7 +62,7 @@ mod_sesion_server <- function(id, estado, raiz = ".") {
       estado$escenarios <- list()
       estado$resultados <- NULL
       estado$firma <- NULL
-      autosave_borrar(raiz)
+      autosave_borrar_sesion(session, raiz)
       showNotification("Sesión nueva.", type = "message")
     })
   })

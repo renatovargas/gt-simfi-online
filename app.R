@@ -16,12 +16,14 @@ for (f in c("mod_esquema.R", "mod_compensacion.R", "mod_composer.R", "mod_sesion
 }
 
 PLANTILLA <- tablas_escenario_plantilla()
+MODO <- modo_app()   # "local" o "servidor" (R/config.R)
 
 ui <- page_navbar(
   id = "nav",
   title = tags$span(style = "font-weight:600;", "Microsimulación del subsidio eléctrico · Guatemala"),
   theme = bs_theme(version = 5, bootswatch = "zephyr", primary = "#005A9C", "navbar-bg" = "#0d2137"),
   fillable = FALSE,
+  header = if (MODO == "servidor") tags$head(tags$script(src = "autosave.js")),
   nav_panel("Instructivo", icon = icon("book-open"), instructivo_ui()),
   nav_panel("1 · Esquemas tarifarios", icon = icon("bolt"),
             div(class = "container-fluid py-2", mod_esquema_ui("esq"))),
@@ -35,7 +37,10 @@ ui <- page_navbar(
 
 server <- function(input, output, session) {
   raiz <- "."
-  guardado <- autosave_leer(raiz)
+  # En modo local el autosave se lee del RDS; en modo servidor llega del navegador
+  # (input$autosave_navegador, ver www/autosave.js) al conectarse la sesión.
+  guardado <- if (MODO == "local") autosave_leer(raiz)
+  restaurado <- reactiveVal(MODO == "local")
   estado <- reactiveValues(
     libs        = guardado$libs %||% biblioteca_inicial(),
     escenarios  = guardado$escenarios %||% list(),
@@ -53,9 +58,21 @@ server <- function(input, output, session) {
   mod_sesion_server("sesion", estado, raiz)
   mod_simulacion_server("sim", estado, PLANTILLA)
 
-  # Autosave de la biblioteca y los escenarios (con una breve espera para agrupar cambios)
+  observeEvent(input$autosave_navegador, once = TRUE, {
+    g <- texto_a_estado(input$autosave_navegador)
+    if (!is.null(g)) {
+      estado$libs <- g$libs
+      estado$escenarios <- g$escenarios
+    }
+    restaurado(TRUE)
+  })
+
+  # Autosave de la biblioteca y los escenarios (con una breve espera para agrupar cambios).
+  # En modo servidor no se guarda hasta restaurar, para no pisar lo guardado con un estado vacío.
   cambios <- debounce(reactive(list(estado$libs, estado$escenarios)), 1000)
-  observeEvent(cambios(), autosave_escribir(raiz, estado$libs, estado$escenarios), ignoreInit = TRUE)
+  observeEvent(cambios(), {
+    if (restaurado()) autosave_guardar_sesion(session, raiz, estado$libs, estado$escenarios, MODO)
+  }, ignoreInit = TRUE)
 }
 
 shinyApp(ui, server)
