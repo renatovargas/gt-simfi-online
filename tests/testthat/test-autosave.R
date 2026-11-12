@@ -45,7 +45,7 @@ test_that("texto vacío, inválido o de otra versión no se restaura", {
 test_that("en modo servidor la sesión se restaura desde el navegador y no lee app_state/", {
   libs <- biblioteca_ejemplo()
   esc <- list(list(name = "Desde el navegador", sub = names(libs$sub)[1], comp = "", comparar = FALSE))
-  withr::local_envvar(GTSIMFI_MODO = "servidor")
+  withr::local_envvar(GTSIMFI_MODO = "servidor", GTSIMFI_MIRAI = "0")  # sin daemons: aquí solo se prueba el autosave
   testServer(shiny::shinyAppDir(raiz), {
     expect_false(restaurado())
     expect_equal(length(estado$escenarios), 0)
@@ -57,7 +57,7 @@ test_that("en modo servidor la sesión se restaura desde el navegador y no lee a
 })
 
 test_that("en modo servidor un navegador sin datos deja la sesión vacía", {
-  withr::local_envvar(GTSIMFI_MODO = "servidor")
+  withr::local_envvar(GTSIMFI_MODO = "servidor", GTSIMFI_MIRAI = "0")  # sin daemons: aquí solo se prueba el autosave
   testServer(shiny::shinyAppDir(raiz), {
     session$setInputs(autosave_navegador = "")
     expect_true(restaurado())

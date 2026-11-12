@@ -7,7 +7,7 @@ library(bslib)
 # Capas: configuración -> adaptador (motor de referencia) -> lógica de la app
 for (f in c("config.R", "adapter_names.R", "adapter_params.R", "adapter_env.R", "adapter_engine.R",
             "adapter_compose.R", "base_scenario.R", "adapter_results.R", "scenario_store.R",
-            "results_views.R", "map_views.R", "ui_helpers.R", "instructivo.R")) {
+            "results_views.R", "map_views.R", "ui_helpers.R", "instructivo.R", "paralelo.R")) {
   source(file.path("R", f), encoding = "UTF-8", local = FALSE)
 }
 for (f in c("mod_esquema.R", "mod_compensacion.R", "mod_composer.R", "mod_sesion.R",
@@ -17,6 +17,13 @@ for (f in c("mod_esquema.R", "mod_compensacion.R", "mod_composer.R", "mod_sesion
 
 PLANTILLA <- tablas_escenario_plantilla()
 MODO <- modo_app()   # "local" o "servidor" (R/config.R)
+
+# En modo servidor los escenarios corren en paralelo en daemons de mirai (R/paralelo.R),
+# que se levantan una vez por proceso de la app.
+if (usar_mirai() && !paralelo_activo()) {
+  iniciar_daemons()
+  onStop(\() mirai::daemons(0))
+}
 
 ui <- page_navbar(
   id = "nav",

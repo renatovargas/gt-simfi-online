@@ -38,3 +38,6 @@ source("data-raw/escribir_manifest.R")   # necesita rsconnect
 - En Connect la app corre en modo servidor (`modo_app()`, `R/config.R`): el trabajo se guarda en
   el navegador de cada persona. Se puede forzar el modo con la variable de entorno `GTSIMFI_MODO`
   (`local` o `servidor`).
+- Los escenarios corren en paralelo con `mirai` en modo servidor. `GTSIMFI_DAEMONS` fija los
+  daemons por proceso (por defecto 2; cada uno ocupa ~0.7 GB tras una corrida) y
+  `GTSIMFI_MIRAI` = `0` apaga el paralelo (`1` lo fuerza, por ejemplo para probar localmente).

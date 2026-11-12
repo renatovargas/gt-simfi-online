@@ -1923,6 +1923,39 @@
         "Archs": "mime.so.dSYM"
       }
     },
+    "mirai": {
+      "Source": "CRAN",
+      "Repository": "https://cloud.r-project.org",
+      "description": {
+        "Type": "Package",
+        "Package": "mirai",
+        "Title": "Minimalist Async Evaluation Framework for R",
+        "Version": "2.7.2",
+        "Authors@R": "c(\n    person(\"Charlie\", \"Gao\", , \"charlie.gao@posit.co\", role = c(\"aut\", \"cre\"),\n           comment = c(ORCID = \"0000-0002-0750-061X\")),\n    person(\"Joe\", \"Cheng\", , \"joe@posit.co\", role = \"ctb\"),\n    person(\"Posit Software, PBC\", role = c(\"cph\", \"fnd\"),\n           comment = c(ROR = \"03wc8by49\")),\n    person(\"Hibiki AI Limited\", role = \"cph\")\n  )",
+        "Description": "Evaluates R expressions asynchronously and in parallel,\n    locally or distributed across networks. An official parallel cluster\n    type for R. Built on 'nanonext' and 'NNG', its non-polling,\n    event-driven architecture scales from a laptop to thousands of\n    processes across high-performance computing clusters and cloud\n    platforms. Features FIFO scheduling with task cancellation and bounded\n    queues, promises for reactive programming, 'OpenTelemetry' distributed\n    tracing, and custom serialization for cross-language data types.",
+        "License": "MIT + file LICENSE",
+        "URL": "https://mirai.r-lib.org, https://github.com/r-lib/mirai",
+        "BugReports": "https://github.com/r-lib/mirai/issues",
+        "Depends": "R (>= 3.6)",
+        "Imports": "nanonext (>= 1.10.1)",
+        "Suggests": "cli, litedown, mori, otel, otelsdk, secretbase",
+        "Enhances": "parallel, promises",
+        "VignetteBuilder": "litedown",
+        "Config/Needs/coverage": "rlang",
+        "Config/Needs/website": "tidyverse/tidytemplate",
+        "Config/roxygen2/markdown": "TRUE",
+        "Config/roxygen2/version": "8.0.0.9000",
+        "Config/usethis/last-upkeep": "2026-07-11",
+        "Encoding": "UTF-8",
+        "NeedsCompilation": "no",
+        "Packaged": "2026-07-20 07:28:30 UTC; cg334",
+        "Author": "Charlie Gao [aut, cre] (ORCID: <https://orcid.org/0000-0002-0750-061X>),\n  Joe Cheng [ctb],\n  Posit Software, PBC [cph, fnd] (ROR: <https://ror.org/03wc8by49>),\n  Hibiki AI Limited [cph]",
+        "Maintainer": "Charlie Gao <charlie.gao@posit.co>",
+        "Repository": "CRAN",
+        "Date/Publication": "2026-07-20 08:10:02 UTC",
+        "Built": "R 4.6.1; ; 2026-07-20 08:31:13 UTC; unix"
+      }
+    },
     "modelr": {
       "Source": "CRAN",
       "Repository": "https://cloud.r-project.org",
@@ -1950,6 +1983,41 @@
         "Repository": "CRAN",
         "Date/Publication": "2023-03-22 13:00:07 UTC",
         "Built": "R 4.6.0; ; 2026-04-25 13:55:06 UTC; unix"
+      }
+    },
+    "nanonext": {
+      "Source": "CRAN",
+      "Repository": "https://cloud.r-project.org",
+      "description": {
+        "Type": "Package",
+        "Package": "nanonext",
+        "Title": "Lightweight Toolkit for Messaging, Concurrency and the Web",
+        "Version": "1.10.2",
+        "Authors@R": "c(\n    person(\"Charlie\", \"Gao\", , \"charlie.gao@posit.co\", role = c(\"aut\", \"cre\"),\n           comment = c(ORCID = \"0000-0002-0750-061X\")),\n    person(\"Posit Software, PBC\", role = c(\"cph\", \"fnd\"),\n           comment = c(ROR = \"03wc8by49\")),\n    person(\"Hibiki AI Limited\", role = \"cph\"),\n    person(\"Staysail Systems, Inc.\", role = \"cph\",\n           comment = \"NNG library\"),\n    person(\"Capitar IT Group BV\", role = \"cph\",\n           comment = \"NNG library\"),\n    person(\"The Mbed TLS Contributors\", role = \"cph\",\n           comment = \"Mbed TLS library\"),\n    person(\"Pierre\", \"L'Ecuyer\", role = \"cph\",\n           comment = \"RngStreams library\"),\n    person(\"sakura authors\", role = \"cph\",\n           comment = \"Serialization hooks\"),\n    person(\"R Consortium\", role = \"fnd\",\n           comment = c(ROR = \"01z833950\"))\n  )",
+        "Description": "R binding for NNG (Nanomsg Next Gen), a successor to ZeroMQ.\n    A toolkit for messaging, concurrency and the web. High-performance\n    socket messaging over in-process, IPC, TCP, WebSocket and secure TLS\n    transports implements 'Scalability Protocols', a standard for common\n    communications patterns including publish/subscribe, request/reply and\n    survey. A threaded concurrency framework with intuitive 'aio' objects\n    that resolve automatically upon completion of asynchronous operations,\n    and synchronisation primitives that allow R to wait on events\n    signalled by concurrent threads. A unified HTTP server hosting REST\n    endpoints, WebSocket connections and streaming on a single port, with\n    a built-in HTTP client.",
+        "License": "MIT + file LICENSE",
+        "URL": "https://nanonext.r-lib.org, https://github.com/r-lib/nanonext",
+        "BugReports": "https://github.com/r-lib/nanonext/issues",
+        "Depends": "R (>= 3.6)",
+        "Suggests": "later, litedown",
+        "Enhances": "promises",
+        "VignetteBuilder": "litedown",
+        "Biarch": "true",
+        "Config/build/compilation-database": "true",
+        "Config/Needs/website": "tidyverse/tidytemplate",
+        "Config/roxygen2/markdown": "TRUE",
+        "Config/roxygen2/version": "8.0.0",
+        "Config/usethis/last-upkeep": "2026-07-11",
+        "Encoding": "UTF-8",
+        "SystemRequirements": "'libnng' >= 1.12 and 'libmbedtls' >= 3.0 (optional,\nbundled sources compiled otherwise)",
+        "NeedsCompilation": "yes",
+        "Packaged": "2026-08-02 22:34:46 UTC; cg334",
+        "Author": "Charlie Gao [aut, cre] (ORCID: <https://orcid.org/0000-0002-0750-061X>),\n  Posit Software, PBC [cph, fnd] (ROR: <https://ror.org/03wc8by49>),\n  Hibiki AI Limited [cph],\n  Staysail Systems, Inc. [cph] (NNG library),\n  Capitar IT Group BV [cph] (NNG library),\n  The Mbed TLS Contributors [cph] (Mbed TLS library),\n  Pierre L'Ecuyer [cph] (RngStreams library),\n  sakura authors [cph] (Serialization hooks),\n  R Consortium [fnd] (ROR: <https://ror.org/01z833950>)",
+        "Maintainer": "Charlie Gao <charlie.gao@posit.co>",
+        "Repository": "CRAN",
+        "Date/Publication": "2026-08-04 14:30:02 UTC",
+        "Built": "R 4.6.1; aarch64-apple-darwin23; 2026-08-04 18:11:16 UTC; unix",
+        "Archs": "nanonext.so.dSYM"
       }
     },
     "openssl": {
@@ -3533,7 +3601,7 @@
       "checksum": "9d61fe943acc1034e10d18ea9447d402"
     },
     "app.R": {
-      "checksum": "bebbb3d7bc66770709e0a45d43d7e9a4"
+      "checksum": "ad3d097dec4c6ab15c07ddc7f88a3a74"
     },
     "data/base_scenario.rds": {
       "checksum": "55195d60444f5c5897b257a2d37ff8e8"
@@ -3575,7 +3643,7 @@
       "checksum": "98548859a44d6b8a4514f001de4cd69a"
     },
     "mod_simulacion.R": {
-      "checksum": "c32fea09dd7e1d91f8a2e00698ed0e59"
+      "checksum": "8daa37313511e90cb82b2bb3e42da74d"
     },
     "R/adapter_compose.R": {
       "checksum": "6841be32804eff08df53b4007fd96a3a"
@@ -3593,22 +3661,25 @@
       "checksum": "0cb3fe457fef3f74d9d8447bf29f6612"
     },
     "R/adapter_results.R": {
-      "checksum": "bd7a0fc48ada826ffa1fcde9542a4f92"
+      "checksum": "4e2688001441a18cdb092996097020bb"
     },
     "R/base_scenario.R": {
       "checksum": "f1378428b37d7069d525c4d6d4148fe5"
     },
     "R/config.R": {
-      "checksum": "439fbe9d4cdf4ef530bc53a0530042f7"
+      "checksum": "6378638dc3da7dda7d52cc3d85db7ec3"
     },
     "R/dependencias.R": {
-      "checksum": "e49ac5667b244d46b72a6767b46b3948"
+      "checksum": "d6958f1f075b3db8049ec1acd0e698ef"
     },
     "R/instructivo.R": {
       "checksum": "d936c6923b99cf80b57cb983a196c294"
     },
     "R/map_views.R": {
       "checksum": "5b9380efe0f845a3387296ef9fa161d8"
+    },
+    "R/paralelo.R": {
+      "checksum": "ad74e49d025989aa0b37b0c2be70cc86"
     },
     "R/pipeline_map.R": {
       "checksum": "f2f5825b7441d20c52808b3a459b7987"

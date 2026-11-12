@@ -3,7 +3,7 @@
 
 library(shiny)
 library(bslib)
-for (f in c("results_views.R", "map_views.R", "ui_helpers.R", "adapter_compose.R", "scenario_store.R")) {
+for (f in c("results_views.R", "map_views.R", "ui_helpers.R", "adapter_compose.R", "scenario_store.R", "paralelo.R")) {
   source(file.path(raiz, "R", f), encoding = "UTF-8")
 }
 for (f in c("mod_resultados.R", "mod_simulacion.R")) source(file.path(raiz, f), encoding = "UTF-8")

@@ -32,6 +32,10 @@ PAQUETES_APP <- c("shiny", "bslib", "DT", "plotly", "htmltools", "jsonlite", "rl
                   "readxl", "openxlsx", "janitor", "testthat")
 # Solo para construir datos (data-raw/): sf, dplyr.
 
+# Solo para correr escenarios en paralelo en modo servidor (R/paralelo.R). En modo
+# local no se exigen: sin ellos la corrida es síncrona.
+PAQUETES_SERVIDOR <- c("mirai", "promises")
+
 #' Paquetes necesarios (app y motor) que no están instalados en este equipo.
 paquetes_faltantes <- function() {
   todos <- setdiff(unique(c(PAQUETES_APP, if (exists("REF_PAQUETES")) REF_PAQUETES)),

@@ -1,7 +1,7 @@
 # R/dependencias.R declara los paquetes para el manifiesto de Connect: debe
 # coincidir con PAQUETES_APP y REF_PAQUETES (sin opcionales ni testthat).
 
-test_that("R/dependencias.R coincide con PAQUETES_APP y REF_PAQUETES", {
+test_that("R/dependencias.R coincide con PAQUETES_APP, REF_PAQUETES y PAQUETES_SERVIDOR", {
   ex <- parse(file.path(raiz, "R", "dependencias.R"), keep.source = FALSE)
   declarados <- character()
   buscar <- function(e) {
@@ -11,7 +11,8 @@ test_that("R/dependencias.R coincide con PAQUETES_APP y REF_PAQUETES", {
     }
   }
   for (e in ex) buscar(e)
-  esperados <- setdiff(unique(c(PAQUETES_APP, REF_PAQUETES)), c("testthat", REF_PAQUETES_OPCIONALES))
+  esperados <- setdiff(unique(c(PAQUETES_APP, REF_PAQUETES, PAQUETES_SERVIDOR)),
+                       c("testthat", REF_PAQUETES_OPCIONALES))
   expect_setequal(declarados, esperados)
   expect_false(anyDuplicated(declarados) > 0)
 })

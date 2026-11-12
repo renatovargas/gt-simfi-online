@@ -3,7 +3,7 @@
 # Este archivo no se carga nunca. Sirve para que el detector de dependencias de
 # rsconnect::writeManifest() vea los paquetes que la app adjunta con
 # library(p, character.only = TRUE) (REF_PAQUETES, R/adapter_names.R) y los de
-# PAQUETES_APP (R/config.R). Una prueba verifica que coincide con esas listas.
+# PAQUETES_APP (R/config.R), más mirai y promises (PAQUETES_SERVIDOR). Una prueba verifica que coincide con esas listas.
 # Sin los opcionales (REF_PAQUETES_OPCIONALES) ni testthat.
 
 if (FALSE) {
@@ -25,4 +25,7 @@ if (FALSE) {
   library(scales)
   library(collapse)
   library(haven)
+  # Corridas en paralelo en modo servidor (R/paralelo.R; opcionales en modo local)
+  library(mirai)
+  library(promises)
 }

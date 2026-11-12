@@ -109,7 +109,7 @@ Este repo no tiene sitio Quarto. La app se despliega en Posit Connect desde GitH
 - Los paquetes del motor se adjuntan con `library(p, character.only = TRUE)`, que el detector de dependencias no ve; por eso se declaran explícitamente en `R/dependencias.R` (nunca se carga). `sf` y `ragg` están en `REF_PAQUETES_OPCIONALES` (`R/adapter_names.R`): `02`-`04` no los usan (paridad idéntica sin ellos) y se adjuntan solo si están instalados.
 - Interruptor de modo en `R/config.R` (`modo_app()`): `"local"` en el equipo de cada persona y `"servidor"` en Connect. Así no se bifurca el código.
 - En modo servidor el autosave va al navegador de cada persona (`localStorage`, clave `gtsimfi_autosave`); el servidor no lo guarda hasta recibir lo que había en el navegador, para no pisarlo. La carpeta de la app es compartida y se borra en cada redespliegue.
-- Configuración en Connect: una conexión por proceso, para que una persona no bloquee a otra.
+- Configuración en Connect: una conexión por proceso, para que una persona no bloquee a otra. Cada proceso levanta sus propios daemons: memoria ≈ procesos × (1 + daemons) × ~0.7 GB (medido en macOS tras una corrida). Ajustar `GTSIMFI_DAEMONS` y el máximo de procesos según la memoria del servidor.
 - Un único punto de entrada al motor, `run_scenario(tablas, session_dir)`, que no usa `.GlobalEnv`, `setwd` ni rutas fijas y escribe solo en un directorio temporal propio. En modo servidor los escenarios corren en paralelo con `shiny::ExtendedTask` + `mirai` (paquetes y código cargados una vez por daemon con `mirai::everywhere()`); se conserva un modo síncrono de respaldo. Verificar con la prueba de aislamiento entre sesiones.
 
 ## Patrones reutilizables de `simfi-rd` (adaptar, no copiar)
@@ -131,7 +131,7 @@ Este repo no tiene sitio Quarto. La app se despliega en Posit Connect desde GitH
 - `R/adapter_results.R`: `combinar_resultados()` convierte `GTM_resumen` en data frames largos con claves; es el único código que conoce posiciones de filas/columnas del resumen. `ejecutar_escenarios()` corre cada escenario con `run_scenario()` y cachea por hash de las tablas.
 - `R/base_scenario.R`: `leer_base_scenario()`, `insumos_base()` y `base_vigente()` (ver «Base reconstruible»).
 - `R/results_views.R`: tablas DT y gráficos **plotly** (puros, solo consumen el objeto de resultados). Ejes y leyendas con etiquetas cortas («Base», «Escenario N», tabla `res$equivalencias` creada por `combinar_resultados()`); nombre completo, esquema, compensación y valor exacto en el hover (`text` + `hovertemplate`). La barra de plotly se configura en `config_plotly()` (solo descarga PNG). `R/map_views.R`: `mapa_region()`, coroplético regional. `R/scenario_store.R`: Excel (hojas `esquemas`, `compensaciones`, `escenarios`) y autosave (`autosave_guardar_sesion()`/`autosave_borrar_sesion()`, según `modo_app()`).
-- La corrida es síncrona; el paso a `ExtendedTask` + `mirai` queda para después (`mod_simulacion.R`).
+- Corrida (`mod_simulacion.R`): con daemons de `mirai` (modo servidor, `R/paralelo.R`), `ExtendedTask` + `input_task_button`; cada escenario nuevo corre en un daemon con `correr_tabla()` y los resultados se arman en el proceso principal con `armar_resultados()`. Sin daemons (modo local, pruebas), ruta síncrona `ejecutar_escenarios()` con `withProgress`. Ambas rutas dan resultados idénticos (`tests/testthat/test-paralelo.R`). Variables de entorno: `GTSIMFI_MIRAI` (`1`/`0`, fuerza o apaga) y `GTSIMFI_DAEMONS` (por defecto 2).
 
 ## Base reconstruible (escenario 0)
 

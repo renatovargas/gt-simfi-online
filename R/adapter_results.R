@@ -191,27 +191,46 @@ combinar_resultados <- function(corridas, nombres, base = NULL, descripciones = 
 #' anterior). `base = FALSE` ignora el archivo; `base` también puede ser una lista
 #' con la forma de `leer_base_scenario()` (se usa en las pruebas).
 #'
+#' Es la ruta síncrona (desarrollo local y pruebas). La ruta en paralelo
+#' (`mod_simulacion.R`, con mirai) usa las mismas piezas: preparar_corridas(),
+#' correr_tabla() en cada daemon y armar_resultados().
+#'
 #' @param cache entorno opcional para reutilizar corridas con las mismas tablas.
 #' @param progreso función opcional `function(i, n, nombre)` llamada antes de cada corrida.
 ejecutar_escenarios <- function(escenarios, libs, plantilla = tablas_escenario_plantilla(),
                                 cache = NULL, progreso = NULL, base = "auto") {
+  prep <- preparar_corridas(escenarios, libs, plantilla, cache)
   n <- length(escenarios)
-  nombres <- vapply(escenarios, \(e) trimws(e$name), "")
-  corridas <- vector("list", n)
   for (i in seq_len(n)) {
-    if (!is.null(progreso)) progreso(i, n, nombres[i])
-    tablas <- compose_scenario_inputs(escenarios[i], libs, plantilla)
-    clave <- rlang::hash(tablas)
-    if (!is.null(cache) && !is.null(cache[[clave]])) {
-      corridas[[i]] <- cache[[clave]]
-    } else {
-      corridas[[i]] <- tryCatch(
-        list(resumen = run_scenario(tablas)$resumen),
-        error = \(e) stop(sprintf("Escenario «%s»: %s", nombres[i], conditionMessage(e)), call. = FALSE))
-      if (!is.null(cache)) cache[[clave]] <- corridas[[i]]
+    if (!is.null(progreso)) progreso(i, n, prep$nombres[i])
+    if (is.null(prep$corridas[[i]])) {
+      prep$corridas[[i]] <- correr_tabla(prep$tablas[[i]], prep$nombres[i])
+      if (!is.null(cache)) cache[[prep$claves[i]]] <- prep$corridas[[i]]
     }
   }
+  armar_resultados(escenarios, libs, prep$corridas, base)
+}
 
+#' Tablas del motor, clave de caché y corrida ya calculada (o NULL) de cada escenario.
+preparar_corridas <- function(escenarios, libs, plantilla = tablas_escenario_plantilla(),
+                              cache = NULL) {
+  nombres <- vapply(escenarios, \(e) trimws(e$name), "")
+  tablas <- lapply(seq_along(escenarios), \(i) compose_scenario_inputs(escenarios[i], libs, plantilla))
+  claves <- vapply(tablas, rlang::hash, "")
+  corridas <- lapply(claves, \(k) if (!is.null(cache)) cache[[k]])
+  list(nombres = nombres, tablas = tablas, claves = claves, corridas = corridas)
+}
+
+#' Corre un escenario en el motor. Es lo único que se ejecuta en cada daemon de mirai.
+correr_tabla <- function(tablas, nombre) {
+  tryCatch(
+    list(resumen = run_scenario(tablas)$resumen),
+    error = \(e) stop(sprintf("Escenario «%s»: %s", nombre, conditionMessage(e)), call. = FALSE))
+}
+
+#' Combina las corridas con la base (archivo si está vigente) en el objeto de resultados.
+armar_resultados <- function(escenarios, libs, corridas, base = "auto") {
+  nombres <- vapply(escenarios, \(e) trimws(e$name), "")
   corrida_base <- NULL
   estado_base <- list(vigente = NA, motivos = character())
   if (!isFALSE(base)) {
