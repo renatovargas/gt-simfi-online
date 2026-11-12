@@ -27,3 +27,8 @@ test_that("los opcionales no se exigen y se omiten si no están instalados", {
   expect_no_error(adjuntar_paquetes_ref(c("readxl", "paquete.inexistente")))
   expect_error(adjuntar_paquetes_ref("otro.paquete.inexistente"))
 })
+
+test_that("R/locale.R es solo ASCII (se lee antes de fijar el locale UTF-8)", {
+  bytes <- readBin(file.path(raiz, "R", "locale.R"), "raw", 1e5)
+  expect_true(all(as.integer(bytes) < 128L))
+})

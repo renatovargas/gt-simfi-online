@@ -28,10 +28,11 @@ n_daemons <- function() {
 iniciar_daemons <- function(n = n_daemons(), raiz = normalizePath(ruta_app())) {
   mirai::daemons(n)
   mirai::everywhere({
+    asegurar_utf8()   # el daemon es otro proceso de R: mismo problema de locale que app.R
     options(gtsimfi.raiz = raiz)
     for (f in archivos) source(file.path(raiz, "R", f), encoding = "UTF-8", local = globalenv())
     adjuntar_paquetes_ref()
-  }, raiz = raiz, archivos = ARCHIVOS_MOTOR)
+  }, raiz = raiz, archivos = ARCHIVOS_MOTOR, asegurar_utf8 = asegurar_utf8)
   invisible(n)
 }
 

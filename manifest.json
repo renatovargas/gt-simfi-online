@@ -3601,7 +3601,7 @@
       "checksum": "9d61fe943acc1034e10d18ea9447d402"
     },
     "app.R": {
-      "checksum": "ad3d097dec4c6ab15c07ddc7f88a3a74"
+      "checksum": "bace8d86118a3c8aa88132221b92ffcb"
     },
     "data/base_scenario.rds": {
       "checksum": "55195d60444f5c5897b257a2d37ff8e8"
@@ -3645,6 +3645,9 @@
     "mod_simulacion.R": {
       "checksum": "8daa37313511e90cb82b2bb3e42da74d"
     },
+    "R/_disable_autoload.R": {
+      "checksum": "2d7da97bc6cca37eada270c3f03ad718"
+    },
     "R/adapter_compose.R": {
       "checksum": "6841be32804eff08df53b4007fd96a3a"
     },
@@ -3675,11 +3678,14 @@
     "R/instructivo.R": {
       "checksum": "d936c6923b99cf80b57cb983a196c294"
     },
+    "R/locale.R": {
+      "checksum": "76113348d084cb32853736b0db1bac1f"
+    },
     "R/map_views.R": {
       "checksum": "5b9380efe0f845a3387296ef9fa161d8"
     },
     "R/paralelo.R": {
-      "checksum": "ad74e49d025989aa0b37b0c2be70cc86"
+      "checksum": "b4ca4dccb3db2e3fa2e4727d8942e18e"
     },
     "R/pipeline_map.R": {
       "checksum": "f2f5825b7441d20c52808b3a459b7987"

@@ -7,7 +7,7 @@ skip_on_cran()
 
 library(shiny)
 library(bslib)
-for (f in c("adapter_compose.R", "scenario_store.R", "results_views.R", "map_views.R", "ui_helpers.R",
+for (f in c("locale.R", "adapter_compose.R", "scenario_store.R", "results_views.R", "map_views.R", "ui_helpers.R",
             "paralelo.R")) {
   source(file.path(raiz, "R", f), encoding = "UTF-8")
 }

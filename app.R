@@ -4,6 +4,10 @@
 library(shiny)
 library(bslib)
 
+# Locale UTF-8 antes de cargar el resto (R/locale.R, solo ASCII).
+source(file.path("R", "locale.R"), local = FALSE)
+asegurar_utf8()
+
 # Capas: configuración -> adaptador (motor de referencia) -> lógica de la app
 for (f in c("config.R", "adapter_names.R", "adapter_params.R", "adapter_env.R", "adapter_engine.R",
             "adapter_compose.R", "base_scenario.R", "adapter_results.R", "scenario_store.R",
