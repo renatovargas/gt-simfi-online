@@ -85,6 +85,11 @@ instructivo_ui <- function() {
         tags$li("Una tarifa objetivo de 0 no es lo mismo que vacía: da al tramo el aporte social máximo."),
         tags$li("Los montos se expresan en quetzales de 2023, con la población de la ENCOVI 2023."))
     ),
+    card(
+      class = "mt-3",
+      card_header("Cómo ajustar el subsidio"),
+      tags$ul(class = "small mb-0", esq_ayuda_ajuste())
+    ),
     div(class = "d-flex justify-content-end pt-3 mt-2 border-top",
         actionButton("comenzar", HTML("Comenzar: 1 · Esquemas tarifarios →"), class = "btn-primary"))
   )
